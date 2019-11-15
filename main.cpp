@@ -2,30 +2,20 @@
 #include <stdlib.h>
 #include "Initialization.h"
 #include "PrintToFile.h"
+#include "MatrixOperation.h"
 
 int main(int argc,char *argv[])
 {
-	int i,j;
+	int i,j,k;
+	
 	char *Directory1,*Directory2;
 	Directory1 = "C:\\Users\\yilehu\\Desktop\\Array.txt";
 	Directory2 = "C:\\Users\\yilehu\\Desktop\\Matrix.txt";
 
-	//************动态数组（一维）***********//
-	//声明//
-	printf("Please set array size\n");
-	scanf("%d",&i);
-	double *CoordX,*CoordY,*CoordZ;
-	CoordX = (double*)malloc(i*sizeof(double));
-	CoordY = (double*)malloc(i*sizeof(double));
-	CoordZ = (double*)malloc(i*sizeof(double));
-
-	InitializeArray(CoordX,i,0.0);
-	InitializeArray(CoordY,i,1.0);
-	InitializeArray(CoordZ,i,2.0);
-
 	//************动态数组（二维）***********//
 	double **Matrix;
-	int m = 5,n = 10;
+	int m = 20,n = 20;
+	int Bandwidth = 5;
 
 	Matrix = (double**)malloc(m*sizeof(double*));
 	for(i=0;i<m;i++)
@@ -34,25 +24,10 @@ int main(int argc,char *argv[])
 	}
 
 	InitializeMatrix(Matrix,m,n,0.0);
+	
+	MatrixDefinition(Matrix,m,Bandwidth);
+
 	PrintMatrix(Matrix,Directory2,"BBB",m,n);
-
-	system("pause");
-
-	//************从文件读取***********//
-	FILE *fp;
-	double x,y,z;
-	for(j=0;j<i;j++)
-	{
-		fscanf(fp,"%lf %lf %lf",&x,&y,&z);
-		CoordX[j] = x;
-		CoordY[j] = y;
-		CoordZ[j] = z;
-	}
-	fclose(fp);
-
-	printf("Which row would you like to check?\n");
-	scanf("%d",&i);
-	printf("%lf %lf %lf\n",CoordX[i],CoordY[i],CoordZ[i]);
 
 	system("pause");
 
