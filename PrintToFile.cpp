@@ -1,27 +1,19 @@
 #include <stdio.h>
 
-void PrintToFile(double **Matrix,int mm,int nn,double *CoordX,double *CoordY,double *CoordZ,int i,char *Directory,char *ArrayName,double var1)
+void PrintArray(double *Array,char *Directory,char *ArrayName,int n)
 {
 	FILE *fp;
 	errno_t err;
-	err = fopen_s(&fp,Directory, "w+");
+	err = fopen_s(&fp,Directory, "a+");
 
-	//fp = fopen("file.txt","w+");
+	fprintf(fp,"Array's name is: %s, Number of rows = %d\n",ArrayName,n);
+	printf("Array's name is: %s, Number of rows = %d\n",ArrayName,n);
 
-	fprintf(fp,"Array's name is: %s, Pi = %20E\n",ArrayName,var1);
-	int j,k;
-	for(j=0;j<i;j++)
+	int i;
+	for(i=0;i<n;i++)
 	{
-		fprintf(fp,"    %16.11lf    %16.11lf    %16.11lf\n",CoordX[j],CoordY[j],CoordZ[j]);
-	}
-
-	for(j=0;j<mm;j++)
-	{
-		for(k=0;k<nn;k++)
-		{
-			fprintf(fp,"%16.11lf",Matrix[j][k]);
-		}
-		fprintf(fp,"\n");
+		fprintf(fp,"%16.11lf\n",Array[i]);
+		printf("%16.11lf\n",Array[i]);
 	}
 	fclose(fp);
 }

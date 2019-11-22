@@ -19,3 +19,16 @@ void MatrixDefinition(double **Matrix,int m,int Bandwidth)
 		}
 	}
 }
+
+void MatrixMultiply(double **A,double *x,double *b,int m,int n)
+{
+	int i,j;
+	for(i=0;i<m;i++)
+	{
+		b[i] = 0.0;
+		for(j=0;j<n;j++)
+		{
+			b[i] += A[i][j]*x[j];
+		}
+	}
+}

@@ -13,6 +13,7 @@ int main(int argc,char *argv[])
 	Directory2 = "C:\\Users\\yilehu\\Desktop\\Matrix.txt";
 
 	//************动态数组（二维）***********//
+	double *x,*b;
 	double **Matrix;
 	int m = 20,n = 20;
 	int Bandwidth = 5;
@@ -23,11 +24,20 @@ int main(int argc,char *argv[])
 		*(Matrix+i) = (double*)malloc(n*sizeof(double));
 	}
 
+	x = (double*)malloc(n*sizeof(double));
+	b = (double*)malloc(m*sizeof(double));
+
 	InitializeMatrix(Matrix,m,n,0.0);
+	InitializeArray(x,n,1.0);
+	InitializeArray(b,m,0.0);
 	
 	MatrixDefinition(Matrix,m,Bandwidth);
+	MatrixMultiply(Matrix,x,b,m,n);
 
-	PrintMatrix(Matrix,Directory2,"BBB",m,n);
+	
+	PrintArray(x,Directory1,"x",n);
+	PrintArray(b,Directory1,"b",m);
+	PrintMatrix(Matrix,Directory2,"A",m,n);
 
 	system("pause");
 
