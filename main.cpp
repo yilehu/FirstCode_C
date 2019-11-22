@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "Initialization.h"
 #include "PrintToFile.h"
 #include "MatrixOperation.h"
@@ -13,34 +14,71 @@ int main(int argc,char *argv[])
 	Directory2 = "C:\\Users\\yilehu\\Desktop\\Matrix.txt";
 
 	//************动态数组（二维）***********//
-	double *x,*b;
+	double *x,*b,*r,*r_new,*p,*ArrayTemp;
 	double **Matrix;
-	int m = 20,n = 20;
+	double error,error0 = 1.0e-6;
+	double alpha,beta;
+	int n = 20;
 	int Bandwidth = 5;
 
-	Matrix = (double**)malloc(m*sizeof(double*));
-	for(i=0;i<m;i++)
+	Matrix = (double**)malloc(n*sizeof(double*));
+	for(i=0;i<n;i++)
 	{
 		*(Matrix+i) = (double*)malloc(n*sizeof(double));
 	}
 
 	x = (double*)malloc(n*sizeof(double));
-	b = (double*)malloc(m*sizeof(double));
+	b = (double*)malloc(n*sizeof(double));
+	r = (double*)malloc(n*sizeof(double));
+	r_new = (double*)malloc(n*sizeof(double));
+	p = (double*)malloc(n*sizeof(double));
+	ArrayTemp = (double*)malloc(n*sizeof(double));
 
-	InitializeMatrix(Matrix,m,n,0.0);
-	InitializeArray(x,n,1.0);
-	InitializeArray(b,m,0.0);
-	
-	MatrixDefinition(Matrix,m,Bandwidth);
-	MatrixMultiply(Matrix,x,b,m,n);
+	InitializeMatrix(Matrix,n,n,0.0);
+	InitializeArray(x,n,0.0);
+	InitializeArray(b,n,1.0);
+	MatrixDefinition(Matrix,n,Bandwidth);
 
-	
+	//Conjugate Gradient//
+	//Initialization//
+	InitializeArray(x,n,0.0);
+	MatrixMultiply(Matrix,x,ArrayTemp,n,n);
+	for(i=0;i<n;i++)
+	{
+		r[i] = b[i] - ArrayTemp[i];
+		p[i] = r[i];
+	}
+	k = 0;
+	error = sqrt(Dotproduct(r,r,n));
+	//Iteration//
+	while(error>error0)
+	{
+		MatrixMultiply(Matrix,p,ArrayTemp,n,n);
+		alpha = Dotproduct(r,r,n)/Dotproduct(p,ArrayTemp,n);
+		for(i=0;i<n;i++)
+		{
+			x[i] += alpha*p[i];
+			r_new[i] = r[i] - alpha*ArrayTemp[i];
+		}
+		error = sqrt(Dotproduct(r_new,r_new,n));
+		printf("Iteration number = %d, error = %12E\n",k,error);
+		beta = Dotproduct(r_new,r_new,n)/Dotproduct(r,r,n);
+		for(i=0;i<n;i++)
+		{
+			p[i] = r_new[i] + beta*p[i];
+			r[i] = r_new[i];
+		}
+		k++;
+	}
+	printf("\n");
 	PrintArray(x,Directory1,"x",n);
-	PrintArray(b,Directory1,"b",m);
-	PrintMatrix(Matrix,Directory2,"A",m,n);
-
 	system("pause");
+	
 
+	
+	
+	PrintArray(b,Directory1,"b",n);
+	PrintMatrix(Matrix,Directory2,"A",n,n);
 	//************基本变量***********//
 	//声明//
 	//char *aaa = "hahahaha";
