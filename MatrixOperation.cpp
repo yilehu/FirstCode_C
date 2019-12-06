@@ -35,7 +35,7 @@ void MatrixMultiply(double **A,double *x,double *b,int m,int n)
 
 double Dotproduct(double *a,double *b,int n)
 {
-	double temp = 0.0;
+	double temp = 0.0000;
 	for(int i=0;i<n;i++)
 	{
 		temp += a[i]*b[i];
