@@ -83,6 +83,7 @@ int main(int argc,char *argv[])
 		k++;
 	}
 	printf("\n");
+	printf("\n");
 	system("pause");
 	
 
