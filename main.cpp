@@ -4,31 +4,27 @@
 #include "Initialization.h"
 #include "PrintToFile.h"
 #include "MatrixOperation.h"
-#include <time.h>
 
 int main(int argc,char *argv[])
 {
 	int i,j,k;
-	int START_CLOCK,END_CLOCK;
-	double Iter_Running_Time,Total_Running_Time;
-
+	
 	char *Directory1,*Directory2;
-	Directory1 = "C:\\Users\\yilehu\\Desktop\\Array.txt";
-	Directory2 = "C:\\Users\\yilehu\\Desktop\\Matrix.txt";
+	Directory1 = "Array.dat";
+	Directory2 = "Matrix.dat";
 
 	//************动态数组（二维）***********//
 	double *x,*b,*r,*r_new,*p,*ArrayTemp;
 	double **Matrix;
 	double error,error0 = 1.0e-6;
 	double alpha,beta;
-	int n = 20000;
+	int n = 20;
 	int Bandwidth = 5;
 
 	Matrix = (double**)malloc(n*sizeof(double*));
 	for(i=0;i<n;i++)
 	{
-		//*(Matrix+i) = (double*)malloc(n*sizeof(double));
-		*(Matrix+i) = (double*)malloc((2*Bandwidth-1)*sizeof(double));
+		*(Matrix+i) = (double*)malloc(n*sizeof(double));
 	}
 
 	x = (double*)malloc(n*sizeof(double));
@@ -38,18 +34,15 @@ int main(int argc,char *argv[])
 	p = (double*)malloc(n*sizeof(double));
 	ArrayTemp = (double*)malloc(n*sizeof(double));
 
-	InitializeMatrix(Matrix,n,2*Bandwidth-1,0.0);
+	InitializeMatrix(Matrix,n,n,0.0);
 	InitializeArray(x,n,0.0);
 	InitializeArray(b,n,1.0);
-	//MatrixDefinition(Matrix,n,Bandwidth);
-	MatrixDefinition_Banded(Matrix,n,Bandwidth);
+	MatrixDefinition(Matrix,n,Bandwidth);
 
-	Total_Running_Time = 0.0;
 	//Conjugate Gradient//
 	//Initialization//
 	InitializeArray(x,n,0.0);
-	//MatrixMultiply(Matrix,x,ArrayTemp,n,n);
-	MatrixMultiply_Banded(Matrix,x,ArrayTemp,n,2*Bandwidth-1,Bandwidth);
+	MatrixMultiply(Matrix,x,ArrayTemp,n,n);
 	for(i=0;i<n;i++)
 	{
 		r[i] = b[i] - ArrayTemp[i];
@@ -60,9 +53,7 @@ int main(int argc,char *argv[])
 	//Iteration//
 	while(error>error0)
 	{
-		START_CLOCK = clock();
-		//MatrixMultiply(Matrix,p,ArrayTemp,n,n);
-		MatrixMultiply_Banded(Matrix,p,ArrayTemp,n,2*Bandwidth-1,Bandwidth);
+		MatrixMultiply(Matrix,p,ArrayTemp,n,n);
 		alpha = Dotproduct(r,r,n)/Dotproduct(p,ArrayTemp,n);
 		for(i=0;i<n;i++)
 		{
@@ -70,27 +61,24 @@ int main(int argc,char *argv[])
 			r_new[i] = r[i] - alpha*ArrayTemp[i];
 		}
 		error = sqrt(Dotproduct(r_new,r_new,n));
+		printf("Iteration number = %d, error = %12E\n",k,error);
 		beta = Dotproduct(r_new,r_new,n)/Dotproduct(r,r,n);
 		for(i=0;i<n;i++)
 		{
 			p[i] = r_new[i] + beta*p[i];
 			r[i] = r_new[i];
 		}
-		END_CLOCK = clock();
-		Iter_Running_Time = (double)(END_CLOCK - START_CLOCK)/CLOCKS_PER_SEC;
-		Total_Running_Time += Iter_Running_Time;
-		printf("Iteration number = %d, error = %12E, Iteration time = %12.6lf, Total time = %12.6lf\n",k,error,Iter_Running_Time,Total_Running_Time);
 		k++;
 	}
 	printf("\n");
-	printf("\n");
+	PrintArray(x,Directory1,"x",n);
 	system("pause");
 	
 
-	//PrintMatrix(Matrix,Directory2,"A",n,n);
-	//PrintArray(b,Directory1,"b",n);
-	//PrintArray(x,Directory1,"x",n);
-
+	
+	
+	PrintArray(b,Directory1,"b",n);
+	PrintMatrix(Matrix,Directory2,"A",n,n);
 	//************基本变量***********//
 	//声明//
 	//char *aaa = "hahahaha";
